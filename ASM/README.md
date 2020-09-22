@@ -1,4 +1,4 @@
-# @Atari8BitBot assemby code examples
+## @Atari8BitBot assembly code examples
 
 Normally I use the [xasm](https://github.com/pfusik/xasm) cross-assembler for my Atari 8-bit projects. But in this case because the bot uses Atari Assembler Editor to compile and execute the code I decided to use [OMC65](https://github.com/pkali/omc65) assembler from Our 5oft because this cross-assembler have the syntax compatible with MAC/65 Macro assembler, that is very similar to the Atari Assembler Editor used by [Atari8BitBot](https://atari8bitbot.com/). This gives me a possibility to compile and test code before posting it to the twitter bot.
 
