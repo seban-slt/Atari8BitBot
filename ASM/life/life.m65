@@ -16,6 +16,8 @@ buf2 = $ac40		; screen buffer #2 address
 ; the code is called by the USR instrution from BASIC
 ; so the Y register is set to #1, and X register is set to #2
 
+; generation of random cell population
+
 	iny		; increment Y reg. (so we have #2 in Y reg.)	
 s0	lda $d20a	; get random value
 	and #$03	; mask out (0-3 values now possible)
@@ -28,14 +30,16 @@ s1	inc buf1+39,x	; increment screen buffer (born of cell)
 	bpl s0		; negative? no, so do the loop
 	stx buf1+2	; clear out the cursor
 
-; buffers setup
+; generation loop...
+
+; but at first we need to setup the bufferw pointers
 
 ngen	lda #<buf1	; init LO-Bytes of buffer pointers
 	sta src
 	sta dst
-xor	lda #>buf2	; init HI-byte...
-	sta dst+1	; of dst pointer
-	eor #$10	; fast way of change to 2nd buffer
+xor	lda #>buf2	; load HI-byte...
+	sta dst+1	; and put it in dst pointer
+	eor #$10	; some kind of dirty hack, the fast way of change to 2nd buffer address
 	sta src+1	; set HI-byte of src pointer
 	sta $bc25	; set also screen address in display list (double buffering, page filp, etc.)
 	sta xor+1	; set the buffer value for next generation of cells (swap the buffers actual with previous)
