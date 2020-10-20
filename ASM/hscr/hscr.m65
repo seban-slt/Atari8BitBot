@@ -9,14 +9,14 @@
 	sty $231	; set HI-byte of DL address
 	sty $2c4	; also $7f will be the char colour
 	iny		; inc. Y, so we have $80 in Y now!
-m0	lda #$56	; load ANTIC mode 6 with LMS + hscroll 
+m0	lda #$56	; load ANTIC mode #6 with LMS + hscroll 
 	jsr pdl		; push to DL
 	lda #$64	; LO-byte of LMS
 	jsr pdl		; push to DL
 	tya		; HI-byte of LMS from Y reg.
 	jsr pdl		; push to DL
 	iny		; next line will start at next memory page ($80,$81...)
-	cpx #90		; display-list complette? 
+	cpx #90		; display-list construction complette? 
 	bcc m0		; no! do the loop!
 
 ; select 2nd half on charset for ANTIC mode #6 (graphics 1)
@@ -47,20 +47,20 @@ lx	dex		; loop counter decrement -1
 	bpl l3		; loop until end of DL (X reg. > 0)
 
 s	ldx #8		; H-Scroll value
-	stx $d404	; put it into HScroll register
+	stx $d404	; put it into ANTIC HScroll register
 
 ; random maze generator routine is executed only whenn H-scroll register have full cycle
 
 	dex		; decrement X (sets the Z bit in status register, and shorter then CPX)
 	bne l0		; when X not zero skip maze-generator routine
 
-	lda #$80	; init the HI-byte of maze generator write pointer
-	sta 1
+	lda #$80	; 1st displayed line is located at $8000, 2nd at $8100, etc.
+	sta 1		; init the HI-byte of maze generator write pointer
 	
 	ldx #30		; we will generate 30 maze elements (1 for each line)
-l4	lda $d20a	; get random byte
-	and #1		; leave only 1 bit (#0), so here we have only 0 or 1
-	clc
+l4	lda $d20a	; get random byte from POKEY POLY/LFSR reigster
+	and #1		; leave only one bit (bit#0), so here we have only 0 or 1 values
+	clc		; clear carry bit (before addition)
 	adc #6		; add six, so we can get \ or / symbol in maze
 	ldy #$00	; set slide window pointer at the begining of scroll window
 	sta (0),y	; write value into scroll slide window
